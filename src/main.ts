@@ -94,11 +94,20 @@ export default {
             }
         })
 
-        musickit.addEventListener('metadataDidChange', async () => {
+        musickit.addEventListener('mediaItemStateDidChange', async () => {
             const cfg = useConfig();
             if (!cfg.enabled) return;
             const currentOldData = oldData;
             const currentItem = musickit.nowPlayingItem;
+
+
+            // Check if PlayingItem exists first as this triggers even while it still isn't set
+            if (!currentItem) return;
+            // Check if oldData is populated and if it is the same id as the event fires a few times before the currentItem switches over.
+            if (Object.keys(currentOldData).length > 0 && currentItem.id === currentOldData.id) return;
+
+            oldData = musickit.nowPlayingItem;
+            oldData.listenedAt = Math.floor(new Date().getTime() / 1000);
 
             const playing_data = {
                 listen_type: "playing_now",
@@ -127,9 +136,6 @@ export default {
                 },
             });
             await fetch(request);
-
-            oldData = musickit.nowPlayingItem;
-            oldData.listenedAt = Math.floor(new Date().getTime() / 1000);
 
             if (Object.keys(currentOldData).length !== 0) {
                 const scrobble_data = {
