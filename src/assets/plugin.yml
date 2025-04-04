@@ -1,8 +1,8 @@
-identifier: ch.kaifa.listenbrainz
-name: ListenBrainz
+identifier: xyz.thrzl.listenbrainz
+name: ListenBrainz Enhanced
 description: Plugin to submit listening data to ListenBrainz
-author: mar0xy
-repo: https://github.com/KAIFA-CH/cider-listenbrainz
+author: thrzl
+repo: https://github.com/thrzl/cider-listenbrainz
 entry:
   "plugin.js":
     type: main

@@ -1,5 +1,5 @@
 import { defineCustomElement } from "./api/CustomElement/apiCustomElement.ts";
-import { PluginAPI } from "./api/PluginAPI";
+import type { PluginAPI } from "./api/PluginAPI";
 import settings from "./components/settings.vue";
 import { customElementName } from "./utils";
 import config from './plugin.config.ts'
@@ -51,29 +51,32 @@ export default {
 
         musickit.addEventListener('playbackStateDidChange', async () => {
             const cfg = useConfig();
-            if (!cfg.enabled) return;
+            // if (!cfg.enabled) return;
             let currentOldData = oldData;
             const currentItem = musickit.nowPlayingItem;
 
             if (Object.keys(currentOldData).length === 0) return;
-  
+
             if (!currentItem && musickit.queue._nextPlayableItemIndex === -1) {
                 const scrobble_data = {
                     listen_type: "single",
                     payload: [
-                    {
-                        listened_at: currentOldData.listenedAt,
-                        track_metadata: {
-                            additional_info: {
-                                media_player: "Cider",
-                                submission_client: "Cider",
-                                music_service: "music.apple.com",
-                                duration_ms: currentOldData.attributes.durationInMillis,
+                        {
+                            listened_at: currentOldData.listenedAt,
+                            track_metadata: {
+                                additional_info: {
+                                    media_player: "Cider",
+                                    submission_client: "Cider",
+                                    music_service: "music.apple.com",
+                                    duration_ms: currentOldData.attributes.durationInMillis,
+                                    isrc: currentOldData.attributes.isrc.match(/[A-Z]{2}-?\w{3}-?\d{2}-?\d{5}/)[0],
+                                    tracknumber: currentOldData.attributes.trackNumber,
+                                },
+                                artist_name: currentOldData.attributes.artistName,
+                                track_name: currentOldData.attributes.name,
+                                release_name: currentOldData.attributes.albumName,
                             },
-                            artist_name: currentOldData.attributes.artistName,
-                            track_name: currentOldData.attributes.name,
                         },
-                    },
                     ],
                 };
 
@@ -96,7 +99,7 @@ export default {
 
         musickit.addEventListener('mediaItemStateDidChange', async () => {
             const cfg = useConfig();
-            if (!cfg.enabled) return;
+            // if (!cfg.enabled) return;
             const currentOldData = oldData;
             const currentItem = musickit.nowPlayingItem;
 
@@ -112,18 +115,21 @@ export default {
             const playing_data = {
                 listen_type: "playing_now",
                 payload: [
-                  {
-                    track_metadata: {
-                      additional_info: {
-                        media_player: "Cider",
-                        submission_client: "Cider",
-                        music_service: "music.apple.com",
-                        duration_ms: currentItem.attributes.durationInMillis,
-                      },
-                      artist_name: currentItem.attributes.artistName,
-                      track_name: currentItem.attributes.name,
+                    {
+                        track_metadata: {
+                            additional_info: {
+                                media_player: "Cider",
+                                submission_client: "Cider",
+                                music_service: "music.apple.com",
+                                duration_ms: currentItem.attributes.durationInMillis,
+                                isrc: currentItem.attributes.isrc.match(/[A-Z]{2}-?\w{3}-?\d{2}-?\d{5}/)[0],
+                                tracknumber: currentItem.attributes.trackNumber,
+                            },
+                            artist_name: currentItem.attributes.artistName,
+                            track_name: currentItem.attributes.name,
+                            release_name: currentItem.attributes.albumName,
+                        },
                     },
-                  },
                 ],
             };
 
@@ -141,19 +147,21 @@ export default {
                 const scrobble_data = {
                     listen_type: "single",
                     payload: [
-                    {
-                        listened_at: currentOldData.listenedAt,
-                        track_metadata: {
-                            additional_info: {
-                                media_player: "Cider",
-                                submission_client: "Cider",
-                                music_service: "music.apple.com",
-                                duration_ms: currentOldData.attributes.durationInMillis,
+                        {
+                            listened_at: currentOldData.listenedAt,
+                            track_metadata: {
+                                additional_info: {
+                                    media_player: "Cider",
+                                    submission_client: "Cider",
+                                    music_service: "music.apple.com",
+                                    tracknumber: currentOldData.attributes.trackNumber,
+                                    isrc: currentOldData.attributes.isrc.match(/[A-Z]{2}-?\w{3}-?\d{2}-?\d{5}/)[0],
+                                },
+                                artist_name: currentOldData.attributes.artistName,
+                                track_name: currentOldData.attributes.name,
+                                release_name: currentOldData.attributes.albumName,
                             },
-                            artist_name: currentOldData.attributes.artistName,
-                            track_name: currentOldData.attributes.name,
                         },
-                    },
                     ],
                 };
 
